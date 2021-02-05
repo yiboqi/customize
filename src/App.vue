@@ -1,18 +1,23 @@
 <template>
-  <Home/>
+    <div id="app">
+      <Index/>
+    </div>
 </template>
 
 <script>
-import Home from './views/Home/Home'
+import Index from './views/Index/Index'
 
 export default {
   name: 'App',
   components: {
-    Home
+    Index
   }
 }
 </script>
 
 <style>
-  @import "assets/css/normalize.css";
+@import "assets/css/base.css";
+#app{
+  height: 100%;
+}
 </style>
