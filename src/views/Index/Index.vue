@@ -16,8 +16,9 @@
               <el-menu-item index="2-2">选项2</el-menu-item>
               <el-menu-item index="2-3">选项3</el-menu-item>
             </el-submenu>
+            <el-menu-item index="4" class="logout" @click="logout">退出</el-menu-item>
+            <el-menu-item index="3" class="el-icon-location news">消息</el-menu-item>
           </el-menu>
-
         </el-header>
         <el-container>
           <el-aside style="background-color: #545c64;width: 200px">
@@ -29,25 +30,25 @@
                   class="el-menu-vertical-demo"
                   background-color="#545c64"
                   text-color="#fff"
-                  active-text-color="#ffd04b">
-                  <el-submenu index="1">
-                    <template slot="title">
-                      <i class="el-icon-location"></i>
-                      <span>导航一</span>
-                    </template>
-                    <el-menu-item-group>
-                      <el-menu-item index="1-1">选项1</el-menu-item>
-                      <el-menu-item index="1-2">选项2</el-menu-item>
-                    </el-menu-item-group>
-                    <el-submenu index="1-4">
-                      <template slot="title">选项4</template>
-                      <el-menu-item index="1-4-1">选项1</el-menu-item>
+                  active-text-color="#ffd04b"
+                  @open="handleOpen"
+                  @close="handleClose"
+                  unique-opened>
+                  <template  v-for="items in $store.state.menus" >
+                    <!--eslint-disable-next-line-->
+                    <el-submenu :index="items.menuId" :key="items.menuId">
+                      <template slot="title">
+                        <i class="el-icon-location"></i>
+                        <span>{{ items.menuName }}</span>
+                      </template>
+                      <template v-for="item in items.children">
+                        <el-menu-item-group :key="item.menuId">
+                          <el-menu-item :index="item.menuId"
+                                        @click="handleSub">{{ item.menuName }}</el-menu-item>
+                        </el-menu-item-group>
+                      </template>
                     </el-submenu>
-                  </el-submenu>
-                  <el-menu-item index="2">
-                    <i class="el-icon-menu"></i>
-                    <span slot="title">导航二</span>
-                  </el-menu-item>
+                  </template>
                 </el-menu>
               </el-col>
             </el-row>
@@ -63,28 +64,108 @@
 </template>
 
 <script>
+import {request} from '../../network/request'
+
 export default {
   name: 'Index',
   data () {
-    return {
+    return {/*  */
       activeIndex: '1',
-      sideIndex: '1-1'
+      sideIndex: '3',
+      menus: []
+    }
+  },
+  computed:{
+  },
+  created () {
+    this.req();
+  },
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
+    },
+    handleSub:function(key){
+      console.log('sub', key);
+      this.sideIndex = key.index
+      if(this.sideIndex == "3"){
+        this.$router.push("/goods")
+      }
+      if(this.sideIndex == "4"){
+        this.$router.push("/role")
+      }
+      if(this.sideIndex == "5"){
+        this.$router.push("/user")
+      }
+      if(this.sideIndex == "6"){
+        this.$router.push("/order")
+      }
+    },
+    // 请求菜单
+    req:function(){
+      let username = localStorage.getItem('username')
+      request({
+        url: '/menu/getUserMenu',
+        method: 'post',
+        data: {
+          username: username
+        }
+      }).then(res => {
+        // console.log(res.data.data)
+        this.menus = this.getTree(0, res.data.data, []);
+        console.log(this.menus)
+        this.$store.commit('menus',this.menus);
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 菜单整理  参考： https://blog.qianxiaoduan.com/archives/1569
+    getTree:function(pid, arr, res) {
+      let that = this;
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].parentId == pid) {
+          res.push(arr[i])
+          arr.splice(i, 1)
+          i--
+        }
+      }
+      res.map(r => {
+        r.children = []
+        that.getTree(r.menuId, arr, r.children)
+        if (r.children.length == 0) {
+          delete  r.children
+        }
+      })
+      return res
+    },
+    // 退出
+    logout:function () {
+      request({
+        url:'/logout',
+        method: "get"
+      })
     }
   }
 }
 </script>
 
 <style scoped>
-.el-container{
-  padding: 0px;
-  margin: 0px;
-  height: 100%;
-}
-.el-header{
-  padding: 0px;
-  margin: 0px;
-}
-.el-col{
-  width: 100%;
-}
+  .el-container{
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+  }
+  .el-header{
+    padding: 0px;
+    margin: 0px;
+  }
+  .el-col{
+    width: 100%;
+  }
+  .logout,
+  .news{
+    float: right;
+  }
 </style>
