@@ -22,6 +22,15 @@ export function reqUserList () { // 获取用户接口
     method: 'get',
   })
 }
+export function reqUserPageList (pageQuery) { // 获取用户接口
+  return request({ // 使用封装好的 axios 进行网络请求
+    url: '/findPage',
+    method: 'post',
+    data:{
+      pageQuery
+    }
+  })
+}
 export function updateStatus (user) { // 登录接口
   return request({ // 使用封装好的 axios 进行网络请求
     url: '/updateStatus',
@@ -71,4 +80,14 @@ export function updateUser (user) { // 获取信息接口
     }
   })
 }
+
+// 导出用户
+export function exportUser () { // 获取信息接口
+  return request({ // 使用封装好的 axios 进行网络请求
+    url: '/exportUser',
+    method: 'post',
+    responseType: 'blob'
+  })
+}
+
 

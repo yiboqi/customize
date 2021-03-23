@@ -28,8 +28,8 @@ const routes = [
         component: () => import("../views/Index/children/GoodsManage/goods/Goods")
       },
       {
-        path: '/order',
-        component: () => import("../views/Index/children/OrderManage/order/Order")
+        path: '/device',
+        component: () => import("../views/Index/children/DeviceManage/DeviceList/DeviceList")
       },
       {
         path: '/user',
@@ -38,6 +38,10 @@ const routes = [
       {
         path: '/role',
         component: () => import("../views/Index/children/UserManage/Role/Role")
+      },
+      {
+        path: '/order',
+        component: () => import("../views/Index/children/OrderManage/order/Order")
       }
     ]
   },

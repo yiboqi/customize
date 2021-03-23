@@ -2,7 +2,7 @@
 import { request } from '../network/request'
 
 export function searchRole (role) { // 获取用户接口
-  return request({ // 使用封装好的 axios 进行网络请求
+  return request({ // 使用封装好的 axiosfindrole 进行网络请求
     url: '/role/searchRole',
     method: 'post',
     data: { // 提交的数据
@@ -14,6 +14,16 @@ export function reqRoleList () { // 获取用户接口
   return request({ // 使用封装好的 axios 进行网络请求
     url: '/role/findrole',
     method: 'get',
+  })
+}
+// 分页查询
+export function reqRolePageList (pageQuery) { // 获取用户接口
+  return request({ // 使用封装好的 axios 进行网络请求
+    url: '/role/findPage',
+    method: 'post',
+    data:{
+      pageQuery
+    }
   })
 }
 export function updateStatus (role) { // 登录接口
@@ -56,7 +66,7 @@ export function delRoleArr (array) { // 获取信息接口
   })
 }
 // 修改用户
-export function updateUser (role) { // 获取信息接口
+export function updateRole (role) { // 获取信息接口
   return request({ // 使用封装好的 axios 进行网络请求
     url: '/role/updateRole',
     method: 'put',
@@ -65,4 +75,3 @@ export function updateUser (role) { // 获取信息接口
     }
   })
 }
-

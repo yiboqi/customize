@@ -48,6 +48,8 @@
       </el-form>
       <div style="margin-top: 5px">
         <el-button @click="refresh">刷新</el-button>
+<!--        <el-button type="info" @click="ImportUser">导入</el-button>-->
+        <el-button type="success" @click="ExportUser">导出</el-button>
         <el-button type="primary" @click="addUser">添加用户</el-button>
         <el-button type="danger" @click="batchDel">批量删除</el-button>
       </div>
@@ -121,16 +123,17 @@
           </template>
         </el-table-column>
       </el-table>
+<!--      分页插件-->
       <el-pagination
         class="pagination"
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page="query.pageIndex"
+        :page-sizes="arrayPage"
+        :page-size="query.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400">
+        :total="totalPage">
       </el-pagination>
 
       <!--   修改 弹窗-->
@@ -187,7 +190,17 @@
 </template>
 
 <script>
-  import {searchUser,reqUserList, updateStatus, addUser, delUserArr, delUser, updateUser } from '../../../../../api/user'
+  import {
+    searchUser,
+    reqUserList,
+    reqUserPageList,
+    updateStatus,
+    addUser,
+    delUserArr,
+    delUser,
+    updateUser,
+    exportUser
+  } from '../../../../../api/user'
 
   export default {
     name: 'User',
@@ -200,7 +213,12 @@
           createTime:'',
         },
         tableData:[],
-        currentPage4: 4,
+        query:{
+          pageIndex:1,
+          pageSize:20,
+        },
+        totalPage:100,
+        arrayPage:[20, 40, 60, 60],
         // 批量删除 数据
         delList:[],
         // 点击编辑用户 显示该弹窗
@@ -222,6 +240,34 @@
       this.reqUserListFun();
     },
     methods:{
+      // 导出 用户
+      ExportUser:function(){
+        let user = this.tableData;
+        console.log("进入",user)
+        exportUser(user).then(res => {
+          // let blob = new Blob([res.data]);
+
+          let blob = new Blob([res.data], { type: 'application/vnd.ms-excel' });
+          let url = window.URL.createObjectURL(blob);
+          var filename = '修改的名字';
+          let link = document.createElement('a')
+          console.log("url",url)
+          console.log("link",link)
+          link.style.display = 'none'
+          link.href = url
+          link.setAttribute('download', filename + '.xls')
+          document.body.appendChild(link)
+          link.click()
+          console.log("导出成功",res)
+        }).catch(err => {
+          console.log("导出失败",err)
+        })
+      },
+      // 导入用户
+      ImportUser:function(){
+
+      },
+      // 模糊搜索
       serachUser:function(val){
         let username = this.userForm.username;
         let mobile = this.userForm.mobile;
@@ -255,9 +301,14 @@
       },
       // 请求用户方法
       reqUserListFun:function () {
-        reqUserList().then(res => {
-          this.tableData = res.data.data
-          console.log("--->获取用户成功")
+        let item = JSON.stringify(this.query);
+        console.log(item)
+        reqUserPageList(item).then(res => {
+          this.tableData = res.data.content;
+          this.totalPage = res.data.totalSize;
+          this.query.pageIndex = res.data.pageNum;
+          this.query.pageSize = res.data.pageSize;
+          console.log("--->获取用户成功",res)
           this.disableFun();
         }).catch( err => {
           console.log("--->获取用户失败",err)
@@ -285,10 +336,18 @@
           console.log("成功",res)
           this.reqUserListFun();
           this.dialogFormaddUser = false;
-          this.$message({
-            message: '添加成功！',
-            type: 'success'
-          });
+          if(res.data.code == 200){
+            this.$message({
+              message: '添加成功！',
+              type: 'success'
+            });
+            this.addForm.username = '';
+            this.addForm.ssex = '';
+            this.addForm.mobile = '';
+            this.addForm.email = '';
+          }else{
+            // 添加失败
+          }
         }).catch(err => {
           console.log("失败",err)
         })
@@ -299,19 +358,27 @@
         // this.showFlag = true;
         // 数组转JSON     JSON 转 对象  JSON.parse(jsonString);
         let list = JSON.stringify(this.delList);
-        if(list.length == 0){
+        if(this.delList.length == 0){
           this.$message({
             message: '请选择用户！',
             type: 'warning',
             duration:'1500'
           });
         }else{
-          this.$confirm('确认永久关闭？')
+          this.$confirm('确认永久删除？')
             .then(resp => {
               console.log(('确定！'))
               delUserArr({list}).then(res => {
                 console.log('删除成功',res)
                 this.reqUserListFun();
+                if(res.data.code == 200){
+                  this.$message({
+                    message: '删除成功！',
+                    type: 'success'
+                  });
+                }else{
+                  // 删除 失败
+                }
               }).catch(err => {
                 console.log('删除失败',err)
               })
@@ -330,12 +397,20 @@
       handleDelete:function(row){
         console.log('row',row)
         let item = JSON.stringify(row);
-        this.$confirm('确认永久关闭？')
+        this.$confirm('确认永久删除？')
           .then(res => {
             console.log('确定！')
             delUser({item}).then(res => {
               console.log('删除成功',this)
               this.reqUserListFun();
+              if(res.data.code == 200){
+                this.$message({
+                  message: '删除成功！',
+                  type: 'success'
+                });
+              }else{
+                // 删除失败
+              }
             }).catch(err => {
               console.log('删除失败')
             })
@@ -357,19 +432,27 @@
           console.log("修改成功",res)
           this.dialogFormVisible = false;
           this.reqUserListFun();
-          this.$message({
-            message: '修改成功！',
-            type: 'success'
-          });
+          if(res.data.code == 200){
+            this.$message({
+              message: '修改成功！',
+              type: 'success'
+            });
+          }else{
+            // 修改失败
+          }
         }).catch(err => {
           console.log("修改失败",err)
         })
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.query.pageSize = val;
+        this.reqUserListFun();
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.query.pageIndex = val;
+        this.reqUserListFun();
       }
     }
   }

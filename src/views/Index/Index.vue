@@ -91,7 +91,7 @@ export default {
       console.log('sub', key);
       this.sideIndex = key.index
       if(this.sideIndex == "3"){
-        this.$router.push("/goods")
+        this.$router.push("/user")
       }
       if(this.sideIndex == "4"){
         this.$router.push("/role")
@@ -99,7 +99,13 @@ export default {
       if(this.sideIndex == "5"){
         this.$router.push("/user")
       }
-      if(this.sideIndex == "6"){
+      if(this.sideIndex == "59"){
+        this.$router.push("/device")
+      }
+      if(this.sideIndex == "61"){
+        this.$router.push("/goods")
+      }
+      if(this.sideIndex == "63"){
         this.$router.push("/order")
       }
     },

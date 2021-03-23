@@ -40,7 +40,7 @@
       </el-form>
       <div style="margin-top: 5px">
         <el-button @click="refresh">刷新</el-button>
-        <el-button type="primary" @click="addRole">添加用户</el-button>
+        <el-button type="primary" @click="addRole">添加角色</el-button>
         <el-button type="danger" @click="batchDel">批量删除</el-button>
       </div>
 <!--    table表格-->
@@ -105,20 +105,45 @@
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page="query.pageIndex"
+        :page-sizes="arrayPage"
+        :page-size="query.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400">
+        :total="totalPage">
       </el-pagination>
 
+      <!--   修改 角色 弹窗-->
+      <el-dialog title="编辑角色" :visible.sync="dialogFormVisible">
+        <el-form :model="updateForm" :rules="updateFormRules">
+          <el-form-item label="角色名" :label-width="formLabelWidth">
+            <el-input v-model="updateForm.roleName"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="clickEnsure">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <!--      添加角色 弹窗-->
+      <el-dialog title="添加角色" :visible.sync="dialogFormaddRole">
+        <el-form :model="addForm" :rules="addFormRules">
+          <el-form-item label="用户名" :label-width="formLabelWidth">
+            <el-input v-model="addForm.roleName"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormaddRole = false">取 消</el-button>
+          <el-button type="primary" @click="addRoleEnsure">确 定</el-button>
+        </div>
+      </el-dialog>
 
     </el-card>
   </div>
 </template>
 
 <script>
-  import {searchRole} from '../../../../../api/role'
+  import {reqRoleList,reqRolePageList , searchRole, delRole, addRole, updateRole,delRoleArr } from '../../../../../api/role'
 
   export default {
     name: 'Role',
@@ -131,44 +156,180 @@
         },
         // 表格数据
         tableData:[],
-        currentPage4: 1,
-
+        query:{
+          pageIndex:1,
+          pageSize:20,
+        },
+        totalPage:100,
+        arrayPage:[20, 40, 60, 60],
+        // 点击编辑用户 显示该弹窗
+        dialogFormVisible:false,
+        // 点击添加用户 显示该弹窗
+        dialogFormaddRole:false,
+        //编辑 提交表单
+        updateForm:{},
+        // 添加用户 提交表单
+        addForm:{},
+        // 编辑 ---> 规则
+        updateFormRules:{},
+        // 添加 ---> 规则
+        addFormRules:{},
+        // 删除 列表
+        delList:[],
+        formLabelWidth:90+'px',
       }
     },
+    created () {
+      this.reqRoleList();
+    },
     methods:{
+      // 请求所有用户角色
+      reqRoleList:function(){
+        let item = JSON.stringify(this.query);
+        reqRolePageList(item).then(res => {
+          this.tableData = res.data.content;
+          this.totalPage = res.data.totalSize;
+          this.query.pageIndex = res.data.pageNum;
+          this.query.pageSize = res.data.pageSize;
+          console.log("请求成功！",res)
+        }).catch(err => {
+          console.log("请求失败！",err)
+        })
+      },
       // 模糊搜索 用户角色
       searchRole:function (val) {
         console.log("val",val)
-        searchRole({val}).then(res => {
+        searchRole(val).then(res => {
           console.log("res",res)
+          this.tableData = res.data.data;
         }).catch(err => {
           console.log("err",err)
         })
       },
       // 重置表单内容
       refreshRoleForm:function () {
-
+        this.roleForm.roleName = '';
+        this.roleForm.status = '';
+        this.roleForm.createTime = '';
       },
-      handleSelectionChange:function () {
-
-      },
-      // 刷新
-      refresh:function(){
-
-      },
-      // 添加 角色
-      addRole:function(){
-
+      handleSelectionChange:function (val) {
+        console.log('多选',val)
+        this.delList = val;
       },
       // 批量 删除
       batchDel:function(){
-
+        let list = JSON.stringify(this.delList);
+        // console.log(this.delList.length)
+        if(this.delList.length == 0){
+          this.$message({
+            message: '请选择角色！',
+            type: 'warning',
+            duration:'1500'
+          });
+        }else{
+          this.$confirm('确认永久删除？')
+            .then(resp => {
+              console.log(('确定！'))
+              delRoleArr({list}).then(res => {
+                console.log('删除成功',res)
+                this.reqRoleList();
+                if(res.data.code == 200){
+                  this.$message({
+                    message: '删除成功！',
+                    type: 'success'
+                  });
+                }else{
+                  // 删除 失败
+                }
+              }).catch(err => {
+                console.log('删除失败',err)
+              })
+            })
+            .catch(error => {
+              console.log('已取消！',error)
+            });
+        }
+      },
+      // 刷新
+      refresh:function(){
+        this.reqRoleList();
+      },
+      // 添加 角色   显示弹窗
+      addRole:function(){
+        this.dialogFormaddRole = true;
+      },
+      // 添加 角色
+      addRoleEnsure:function(){
+        let item = this.addForm;
+        addRole(item).then(res => {
+          console.log("成功",res)
+          this.reqRoleList();
+          this.dialogFormaddRole = false;
+          if(res.data.code == 200){
+            this.$message({
+              message: '添加成功！',
+              type: 'success'
+            });
+            this.addForm.roleName = '';
+          }else {
+           // 添加失败
+          }
+        }).catch(err => {
+          console.log("失败",err)
+        })
+        this.dialogFormaddRole = true;
+      },
+      // 点击 编辑修改 弹窗显示
+      handleEdit:function(val){
+        this.dialogFormVisible = true;
+        this.updateForm = val;
+      },
+      // 点击确定 修改角色
+      clickEnsure:function(){
+        let item = JSON.stringify(this.updateForm);
+        updateRole(item).then(res => {
+          console.log("修改角色成功",res)
+          this.dialogFormVisible = false;
+          this.reqRoleList();
+          if(res.data.code == 200){
+            this.$message({
+              message: '修改角色成功！',
+              type: 'success'
+            });
+          }else {
+            // 修改 失败
+          }
+        }).catch(err => {
+          console.log("修改失败",err)
+        })
+      },
+      // 单个删除
+      handleDelete:function(val){
+        console.log("删除信息",val)
+        delRole(val).then(res => {
+          console.log(res)
+          this.reqRoleList();
+          if(res.data.code == 200){
+            this.$message({
+              message: '修改角色成功！',
+              type: 'success'
+            });
+          }else{
+            // 删除 失败！
+          }
+        }).catch(err => {
+          console.log(err)
+        })
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);
+        this.query.pageSize = val;
+        this.reqRoleList();
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.query.pageIndex = val;
+        this.reqRoleList();
       }
     }
   }
