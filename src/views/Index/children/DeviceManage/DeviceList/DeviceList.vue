@@ -98,7 +98,7 @@
 </template>
 
 <script>
-  import {reqDeviceList,reqDevicePageList , delDevice, addDevice, updateDevice,delDeviceArr} from '../../../../../api/device'
+  import {reqDeviceList,reqDevicePageList , delDevice, addDevice, updateDevice,delDeviceArr, exportDevice} from '../../../../../api/device'
   export default {
     name: 'DeviceList',
     data(){
@@ -258,11 +258,26 @@
       },
       // 导入
       clickImport:function(){
-        
+
       },
       // 导出
       clickExport:function(){
-
+        exportDevice().then(res => {
+          console.log('导出成功',res)
+          let blob = new Blob([res.data], { type: 'application/vnd.ms-excel' });
+          let url = window.URL.createObjectURL(blob);
+          var filename = '设备信息表';
+          let link = document.createElement('a')
+          console.log("url",url)
+          console.log("link",link)
+          link.style.display = 'none'
+          link.href = url
+          link.setAttribute('download', filename + '.xls')
+          document.body.appendChild(link)
+          link.click()
+        }).catch(err => {
+          console.log('导出失败',err)
+        })
       },
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`);

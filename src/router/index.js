@@ -2,15 +2,26 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Index from '../views/Index/Index'
 import Login from '../views/Login/Login'
+import { getToken } from '../assets/js/auth'
+import store from '../store/index'//引入store
+
 Vue.use(VueRouter)
+
+// 解决：https://blog.csdn.net/weixin_43242112/article/details/107595460
+//获取原型对象上的push函数
+const originalPush = VueRouter.prototype.push
+//修改原型对象中的push方法
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 const routes = [
   {
-    path: '/login',
-    redirect: '/'
+    path: '/',
+    redirect: '/login'
   },
   {
-    path: '/',
+    path: '/login',
     name: 'Login',
     component: Login
   },
@@ -20,7 +31,7 @@ const routes = [
     component: Index,
     children: [
       {
-        path: '/',
+        path: '/home',
         component: () => import("../views/Index/children/Home/Home")
       },
       {
@@ -44,11 +55,35 @@ const routes = [
         component: () => import("../views/Index/children/OrderManage/order/Order")
       }
     ]
-  },
+  }
 ]
 
 const router = new VueRouter({
-  routes,
-  mode: 'history'
+  // mode: 'history',
+  mode:'hash',
+  routes
 })
+
+// 定义白名单
+const whiteList = ['/login']
+  // 导航守卫： https://www.cnblogs.com/shenjianping/p/11458261.html
+router.beforeEach((to,from, next) => {
+  if( getToken() ){
+    /* has token*/
+    if (to.path == '/login') {
+      next("/index")
+    } else {
+      next()
+    }
+  } else {
+    // 没有token
+    if (whiteList.indexOf(to.path) !== -1) {
+      // 在免登录白名单，直接进入
+      next()
+    } else {
+      next('/login') // 否则全部重定向到登录页
+    }
+  }
+})
+
 export default router

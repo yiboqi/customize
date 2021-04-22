@@ -5,13 +5,13 @@
         <el-tab-pane label="账号密码登录" name="first">
 <!--          账号密码登录-->
           <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules">
-            <el-form-item prop="username">
+            <el-form-item prop="userName">
               <el-input
                 type="text"
-                class="username input-public"
+                class="userName input-public"
                 placeholder="请输入账号"
                 prefix-icon="el-icon-user"
-                v-model="loginForm.username">
+                v-model="loginForm.userName">
               </el-input>
             </el-form-item>
             <el-form-item prop="password">
@@ -81,6 +81,7 @@
 
 <script>
 import {request} from '../../network/request'
+import { setToken } from '../../assets/js/auth'
 
 export default {
   name: 'Login',
@@ -89,9 +90,10 @@ export default {
       activeName: 'first',
       loading: false,
       loginForm: {
-        username: 'admin',
-        password: 'admin',
-        code: 'admin',
+        userName: 'admin',
+        password: '123456',
+        code: '',
+        uuid:'',
         checked: true
       },
       loginPhoneForm:{
@@ -101,7 +103,7 @@ export default {
       },
       loginFormRules: {
         // eslint-disable-next-line no-undef
-        username: [
+        userName: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ],
@@ -132,8 +134,9 @@ export default {
         url:'/createImageCode',
         method: 'get'
       }).then(response => {
-        // console.log("验证码",response.data.data.img)
+        // console.log("验证码",response.data.data)
         this.Vcode = 'data:image/png;base64,'+response.data.data.img
+        this.loginForm.uuid = response.data.data.uuid;
       }).catch(error =>{
         console.log(error)
       })
@@ -151,16 +154,22 @@ export default {
               this.loading = false
               let code = response.data.code
               if (code == 200) {
-                localStorage.setItem('username',this.loginForm.username)
+                localStorage.setItem('userName',this.loginForm.userName)
+                this.$message({
+                  type: "success",
+                  message: "登录成功",
+                });
+                setToken(response.data.data.credentials)
                 this.$router.replace({
                   path: '/index'
                   // query: { data: response.data.data }
                 })
-              } else {
-                this.$router.push({
-                  path: '/error',
-                  query: { message: response.data.message }
-                })
+              } else if(code == 500){
+                this.reqImgCode();
+                this.$message({
+                  type: "error",
+                  message: response.data.msg,
+                });
               }
             })
             .catch((err) => {

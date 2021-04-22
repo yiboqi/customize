@@ -5,10 +5,14 @@
 </template>
 
 <script>
+import Index from './views/Index/Index'
+import Login from './views/Login/Login'
 
 export default {
   name: 'App',
   components: {
+    Login,
+    Index
   }
 }
 </script>

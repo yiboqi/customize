@@ -56,4 +56,12 @@ export function delDeviceArr (array) { // 获取信息接口
     }
   })
 }
+// 导出设备信息
+export function exportDevice () { // 获取信息接口
+  return request({ // 使用封装好的 axios 进行网络请求
+    url: '/device/exportDevice',
+    method: 'get',
+    responseType: 'blob'
+  })
+}
 

@@ -7,11 +7,10 @@ import Vuex from 'vuex' // 引入 Vuex
 
 Vue.use(Vuex)
 
-// eslint-disable-next-line no-redeclare
 const state = {
   username: '',
   password: '',
-  menus:[]
+  menus:[],
 }
 
 const store = new Vuex.Store({
