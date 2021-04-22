@@ -28,6 +28,7 @@ const routes = [
   {
     path: '/index',
     name: 'Index',
+    redirect: '/home',
     component: Index,
     children: [
       {
@@ -71,7 +72,7 @@ router.beforeEach((to,from, next) => {
   if( getToken() ){
     /* has token*/
     if (to.path == '/login') {
-      next("/index")
+      next("/home")
     } else {
       next()
     }

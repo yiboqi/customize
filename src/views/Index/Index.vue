@@ -50,15 +50,15 @@
                      background-color="#545c64"
                      text-color="#fff"
                      active-text-color="#ffd04b">
-              <el-menu-item index="1">处理中心</el-menu-item>
-              <el-submenu index="2">
+              <!-- <el-menu-item index="1">处理中心</el-menu-item> -->
+              <!-- <el-submenu index="2">
                 <template slot="title">我的工作台</template>
                 <el-menu-item index="2-1">选项1</el-menu-item>
                 <el-menu-item index="2-2">选项2</el-menu-item>
                 <el-menu-item index="2-3">选项3</el-menu-item>
-              </el-submenu>
+              </el-submenu> -->
               <el-menu-item index="4" class="logout" @click="logout">退出</el-menu-item>
-              <el-menu-item index="3" class="el-icon-location news">消息</el-menu-item>
+              <!-- <el-menu-item index="3" class="el-icon-location news">消息</el-menu-item> -->
             </el-menu>
           </el-header>
           <el-main style="">
@@ -71,8 +71,8 @@
 </template>
 
 <script>
-import {request} from '../../network/request'
-import { setActivePath,getaAtivePath,removeActivePath } from '../../assets/js/auth'
+import {request} from '../../network/request';
+import { setActivePath, removeToken ,getaAtivePath,removeActivePath } from '../../assets/js/auth'
 
 export default {
   name: 'Index',
@@ -145,11 +145,29 @@ export default {
       return res
     },
     // 退出
-    logout:function () {
-      request({
-        url:'/logout',
-        method: "get"
-      })
+    logout() {
+      this.$confirm("此操作将退出系统, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then((res) => {
+        if (res === "confirm") {
+        removeToken();
+        removeActivePath();
+        this.$router.push("/login");
+        this.$message({
+          type: "success",
+          message: "已退出登入"
+        });
+      }
+      }).catch((err) => {
+        if(err === "cancel"){
+          this.$message({
+          type: "info",
+          message: "已取消退出登入"
+        });
+        }
+      });
     }
   }
 }
