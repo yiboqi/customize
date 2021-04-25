@@ -2,7 +2,7 @@
     <div style="height: 100%">
       <el-container style="height: 100%; " direction="horizontal">
 
-        <el-aside style="background-color: #545c64;width: 200px">
+        <el-aside style="background-color: #515A6E;width: 200px">
           <div class="image">
 
           </div>
@@ -12,7 +12,7 @@
               <el-menu
                 :default-active="sideIndex"
                 class="el-menu-vertical-demo"
-                background-color="#545c64"
+                background-color="#515A6E"
                 text-color="#fff"
                 active-text-color="#ffd04b"
                 @open="handleOpen"
@@ -47,7 +47,7 @@
             <el-menu :default-active="activeIndex"
                      class="el-menu-demo"
                      mode="horizontal"
-                     background-color="#545c64"
+                     background-color="#515A6E"
                      text-color="#fff"
                      active-text-color="#ffd04b">
               <!-- <el-menu-item index="1">处理中心</el-menu-item> -->
@@ -61,7 +61,7 @@
               <!-- <el-menu-item index="3" class="el-icon-location news">消息</el-menu-item> -->
             </el-menu>
           </el-header>
-          <el-main style="">
+          <el-main style="background-color: #F0F0F0;">
 <!--            主题内容-->
             <router-view/>
           </el-main>

@@ -1,5 +1,12 @@
 import {request} from '../network/request'
 
+export function getDeviceCount () { // 获取用户接口
+  return request({ // 使用封装好的 axios 进行网络请求
+    url: '/device/getCount',
+    method: 'get',
+  })
+}
+
 export function reqDeviceList () { // 获取用户接口
   return request({ // 使用封装好的 axios 进行网络请求
     url: '/device/findDevice',

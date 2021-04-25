@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\views",
+    "\\src\\views\\Index",
+    "\\src\\views\\Index\\children",
+    "\\src\\views\\Index\\children\\Home",
+    "\\src\\views\\Index\\children\\Home\\children"
+  ],
+  "SelectedNode": "\\src\\views\\Index\\children\\Home\\children",
+  "PreviewInSolutionExplorer": false
+}
