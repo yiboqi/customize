@@ -53,6 +53,7 @@
           prop="createTime"
           label="创建时间"
           width="250">
+            <template slot-scope="scope">{{scope.row.createTime | dateFormat}}</template>
         </el-table-column>
       </el-table>
       <!--      分页插件-->

@@ -11,7 +11,7 @@
           <el-input
             placeholder="请选择用户名"
             class="input-public"
-            v-model="userForm.username"
+            v-model="userForm.userName"
             clearable>
             <i slot="prefix" class="el-input__icon el-icon-user"></i>
           </el-input>
@@ -26,13 +26,17 @@
           </el-input>
         </el-form-item>
         <el-form-item label="用户状态">
-          <el-input
+          <!-- <el-input
             placeholder="请选择..."
             class="input-public"
             v-model="userForm.status"
             clearable>
             <i slot="prefix" class="el-input__icon el-icon-more-outline"></i>
-          </el-input>
+          </el-input> -->
+          <el-select v-model="userForm.status" placeholder="请输入用户状态" @change="clickChange">
+            <el-option label="启用" value="0"></el-option>
+            <el-option label="禁用" value="1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="注册时间">
           <el-date-picker
@@ -44,7 +48,7 @@
           </el-date-picker>
         </el-form-item>
         <el-button class="btn-search" type="primary" @click="serachUser(userForm)">搜索</el-button>
-        <el-button @click="refreshUserForm">重置</el-button>
+        <el-button class="btn-search"  @click="refreshUserForm">重置</el-button>
       </el-form>
       <div style="margin-top: 5px">
         <el-button @click="refresh">刷新</el-button>
@@ -108,6 +112,7 @@
           prop="createTime"
           label="创建时间"
           width="250">
+            <template slot-scope="scope">{{scope.row.createTime | dateFormat}}</template>
         </el-table-column>
         <el-table-column label="操作"
                          fixed="right"
@@ -266,6 +271,9 @@
       // 导入用户
       ImportUser:function(){
 
+      },
+      clickChange:function(){
+        
       },
       // 模糊搜索
       serachUser:function(val){

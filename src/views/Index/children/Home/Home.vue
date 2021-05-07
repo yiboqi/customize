@@ -177,7 +177,6 @@ import CardItem from './children/card-item.vue';
       getHomeData(){
         getDeviceCount().then((res) => {
           let temp = res.data.data;
-          console.log("-->",temp)
           if(res.data.code == 200){
             this.homeData = temp;
           }

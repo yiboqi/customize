@@ -23,6 +23,7 @@
                   <el-submenu :index="items.menuId + ''" :key="items.menuId">
                     <template slot="title">
                       <i class="el-icon-location"></i>
+                      <!-- <i class="iconfont icon-ziyuan"></i> -->
                       <span>{{ items.menuName }}</span>
                     </template>
                     <template v-for="item in items.children">
@@ -50,15 +51,7 @@
                      background-color="#515A6E"
                      text-color="#fff"
                      active-text-color="#ffd04b">
-              <!-- <el-menu-item index="1">处理中心</el-menu-item> -->
-              <!-- <el-submenu index="2">
-                <template slot="title">我的工作台</template>
-                <el-menu-item index="2-1">选项1</el-menu-item>
-                <el-menu-item index="2-2">选项2</el-menu-item>
-                <el-menu-item index="2-3">选项3</el-menu-item>
-              </el-submenu> -->
               <el-menu-item index="4" class="logout" @click="logout">退出</el-menu-item>
-              <!-- <el-menu-item index="3" class="el-icon-location news">消息</el-menu-item> -->
             </el-menu>
           </el-header>
           <el-main style="background-color: #F0F0F0;">
@@ -93,15 +86,13 @@ export default {
   methods: {
     handleOpen(key, keyPath) {
       console.log("123123",key, keyPath);
-      if(key == keyPath){
-        this.$router.push("/home")
-      }
-      this.sideIndex = '';
-      removeActivePath();
+      // if(key == keyPath){
+      //   this.$router.push("/home")
+      // }
+      this.sideIndex = getaAtivePath();
+      // removeActivePath();
     },
-    handleClose(key, keyPath) {
-      console.log("2123123",key, keyPath);
-    },
+    handleClose(key, keyPath) { },
     handleSub:function(key){
       this.sideIndex = key;
       setActivePath(key);
@@ -118,7 +109,6 @@ export default {
           userName: userName
         }
       }).then(res => {
-        // console.log(res.data.data)
         this.menus = this.getTree(0, res.data.data, []);
         this.$store.commit('menus',this.menus);
       }).catch(err => {
@@ -193,5 +183,9 @@ export default {
   .logout,
   .news{
     float: right;
+  }
+  .icons{
+    width: 20px;
+    height: 20px;
   }
 </style>
