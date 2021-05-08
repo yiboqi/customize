@@ -1,19 +1,11 @@
 // import request from '@/utils/request' // 引入封装好的 axios 请求
 import { request } from '../network/request'
 
-export function searchUser (username,mobile,status,createTime) { // 获取用户接口
-  let user = {
-    username,
-    mobile,
-    status,
-    createTime
-  }
+export function searchUser (query) { // 获取用户接口
   return request({ // 使用封装好的 axios 进行网络请求
     url: '/searchUser',
-    method: 'post',
-    data: { // 提交的数据
-      user
-    }
+    method: 'get',
+    params: query
   })
 }
 export function reqUserList () { // 获取用户接口

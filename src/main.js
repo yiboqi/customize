@@ -5,11 +5,13 @@ import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as echarts from 'echarts'
+import { addDateRange } from "./assets/js/common.js";
 
 // 使用字体图标 ： https://www.jb51.net/article/141544.htm
 // import './assets/fonts/iconfont.css';
 
 Vue.prototype.$echarts = echarts
+Vue.prototype.addDateRange = addDateRange
 
 Vue.config.productionTip = false
 
@@ -17,6 +19,7 @@ Vue.use(ElementUI)
 
 // 时间格式化 过滤器
 // https://blog.csdn.net/Jackson23333/article/details/84944224
+// https://blog.csdn.net/huangge1199/article/details/104630274/
 Vue.filter('dateFormat',function(dateStr,time){
   //得到特定的时间
   var date = new Date(dateStr);

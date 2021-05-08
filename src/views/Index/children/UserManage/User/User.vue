@@ -20,7 +20,7 @@
           <el-input
             placeholder="请选择手机号"
             class="input-public"
-            v-model="userForm.mobile"
+            v-model="userForm.phoneNumber"
             clearable>
             <i slot="prefix" class="el-input__icon el-icon-phone-outline"></i>
           </el-input>
@@ -40,11 +40,14 @@
         </el-form-item>
         <el-form-item label="注册时间">
           <el-date-picker
-            v-model="userForm.createTime"
+            v-model="params"
             class="input-public"
-            type="datetime"
-            placeholder="选择起始时间"
-            default-time="12:00:00">
+            style="width: 240px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
         <el-button class="btn-search" type="primary" @click="serachUser(userForm)">搜索</el-button>
@@ -73,7 +76,7 @@
           width="150">
         </el-table-column>
         <el-table-column
-          prop="username"
+          prop="userName"
           label="用户名"
           width="150">
         </el-table-column>
@@ -83,7 +86,7 @@
           width="150">
         </el-table-column>
         <el-table-column
-          prop="mobile"
+          prop="phoneNumber"
           label="手机号"
           width="250">
         </el-table-column>
@@ -145,7 +148,7 @@
       <el-dialog title="编辑用户" :visible.sync="dialogFormVisible">
         <el-form :model="updateForm" :rules="updateFormRules">
           <el-form-item label="用户名" :label-width="formLabelWidth">
-            <el-input v-model="updateForm.username"></el-input>
+            <el-input v-model="updateForm.userName"></el-input>
           </el-form-item>
           <el-form-item label="性别" :label-width="formLabelWidth">
             <el-select v-model="updateForm.ssex" style="width: 100%" placeholder="请选择">
@@ -154,7 +157,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="手机号" :label-width="formLabelWidth">
-            <el-input v-model="updateForm.mobile" autocomplete="off"></el-input>
+            <el-input v-model="updateForm.phoneNumber" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="邮箱" :label-width="formLabelWidth">
             <el-input v-model="updateForm.email" autocomplete="off"></el-input>
@@ -170,7 +173,7 @@
       <el-dialog title="添加用户" :visible.sync="dialogFormaddUser">
         <el-form :model="addForm" :rules="addFormRules">
           <el-form-item label="用户名" :label-width="formLabelWidth">
-            <el-input v-model="addForm.username"></el-input>
+            <el-input v-model="addForm.userName"></el-input>
           </el-form-item>
           <el-form-item label="性别" :label-width="formLabelWidth">
             <el-select v-model="addForm.ssex" style="width: 100%" placeholder="请选择">
@@ -179,7 +182,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="手机号" :label-width="formLabelWidth">
-            <el-input v-model="addForm.mobile" autocomplete="off"></el-input>
+            <el-input v-model="addForm.phoneNumber" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="邮箱" :label-width="formLabelWidth">
             <el-input v-model="addForm.email" autocomplete="off"></el-input>
@@ -212,11 +215,15 @@
     data(){
       return{
         userForm:{
-          username:'',
-          mobile:'',
+          userName:'',
+          phoneNumber:'',
           status:'',
-          createTime:'',
+          createTime: undefined,
+          beginTime: undefined,
+          endTime:undefined,
         },
+        // 时间范围
+        params:[],
         tableData:[],
         query:{
           pageIndex:1,
@@ -245,6 +252,7 @@
       this.reqUserListFun();
     },
     methods:{
+
       // 导出 用户
       ExportUser:function(){
         let user = this.tableData;
@@ -277,25 +285,27 @@
       },
       // 模糊搜索
       serachUser:function(val){
-        let username = this.userForm.username;
-        let mobile = this.userForm.mobile;
-        let status = this.userForm.status;
-        let createTime = this.userForm.createTime;
+        console.log("------>",this.params)
+        if( this.params != null){
+          this.userForm.beginTime = this.params[0];
+          this.userForm.endTime = this.params[1];
+        }        
         let arr = [];
-        searchUser(username,mobile,status,createTime).then(res => {
+        searchUser(this.userForm).then(res => {
           console.log('模糊搜索成功',res.data.data)
           arr.push(res.data.data)
           this.tableData = arr[0];
+          this.disableFun();
         }).catch(err => {
           console.log('模糊搜索失败')
         })
       },
       // 重置
       refreshUserForm:function(){
-        this.userForm.username = "";
-        this.userForm.mobile = "";
+        this.userForm.userName = "";
+        this.userForm.phoneNumber = "";
         this.userForm.status = "";
-        this.userForm.createTime = "";
+        this.params = [];
       },
       //  0/1 ==> 男/女
       disableFun:function(){
@@ -349,9 +359,9 @@
               message: '添加成功！',
               type: 'success'
             });
-            this.addForm.username = '';
+            this.addForm.userName = '';
             this.addForm.ssex = '';
-            this.addForm.mobile = '';
+            this.addForm.phoneNumber = '';
             this.addForm.email = '';
           }else{
             // 添加失败
