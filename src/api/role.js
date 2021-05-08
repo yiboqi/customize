@@ -1,13 +1,11 @@
 // import request from '@/utils/request' // 引入封装好的 axios 请求
 import { request } from '../network/request'
 
-export function searchRole (role) { // 获取用户接口
+export function searchRole (query) { // 获取用户接口
   return request({ // 使用封装好的 axiosfindrole 进行网络请求
     url: '/role/searchRole',
-    method: 'post',
-    data: { // 提交的数据
-      role
-    }
+    method: 'get',
+    params: query
   })
 }
 export function reqRoleList () { // 获取用户接口

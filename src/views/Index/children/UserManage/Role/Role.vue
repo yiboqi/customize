@@ -72,8 +72,10 @@
             <el-switch
               style="display: block"
               v-model="scope.row.status"
-              :active-value="1"
-              :inactive-value="0"
+              active-color="#5B7BFA"
+              inactive-color="#dadde5"
+              :active-value="'0'"
+              :inactive-value="'1'"
               active-text="启用"
               inactive-text="禁用"
               @change="changeSwitch( scope.row )">
@@ -221,6 +223,9 @@
         this.roleForm.roleName = '';
         this.roleForm.status = '';
         this.roleForm.createTime = '';
+        this.roleForm.beginTime = '';
+        this.roleForm.endTime = '';
+        this.params = [];
       },
       handleSelectionChange:function (val) {
         console.log('多选',val)
