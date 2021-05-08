@@ -86,9 +86,9 @@ export default {
   methods: {
     handleOpen(key, keyPath) {
       console.log("123123",key, keyPath);
-      // if(key == keyPath){
-      //   this.$router.push("/home")
-      // }
+      if(key == '1'){
+        this.$router.push("/home")
+      }
       this.sideIndex = getaAtivePath();
       // removeActivePath();
     },
