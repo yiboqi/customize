@@ -7,22 +7,16 @@
     </el-breadcrumb>
     <el-card class="box-card">
       <el-form ref="orderFormRef" class="order-form" :model="orderForm" label-width="100px">
-        <el-form-item label="用户状态">
-          <el-input
-            placeholder="请选择..."
-            class="input-public"
-            v-model="orderForm.status"
-            clearable>
-            <i slot="prefix" class="el-input__icon el-icon-more-outline"></i>
-          </el-input>
-        </el-form-item>
         <el-form-item label="发起支付时间">
-          <el-date-picker
-            v-model="orderForm.createTime"
+         <el-date-picker
+            v-model="params"
             class="input-public"
-            type="datetime"
-            placeholder="选择起始时间"
-            default-time="12:00:00">
+            style="width: 240px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
         <el-button class="btn-search" type="primary" @click="searchOrder(orderForm)">搜索</el-button>
@@ -82,8 +76,11 @@
       return{
         orderForm:{
           status:'',
-          createTime:'',
+          createTime: undefined,
+          beginTime: undefined,
+          endTime:undefined,
         },
+        params:[],
         tableData:[],
         query:{
           pageIndex:1,
@@ -112,11 +109,17 @@
       },
       searchOrder:function(){
         console.log("模糊搜索")
+         if( this.params != null){
+          this.orderForm.beginTime = this.params[0];
+          this.orderForm.endTime = this.params[1];
+        }    
+        let arr = [];
         let item = this.orderForm;
         searchOrder(item).then(res => {
           console.log('模糊搜索成功',res.data.data)
           arr.push(res.data.data)
           this.tableData = arr[0];
+          console.log(this.tableData);
         }).catch(err => {
           console.log('模糊搜索失败')
         })
