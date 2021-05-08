@@ -18,21 +18,21 @@
           </el-input>
         </el-form-item>
         <el-form-item label="角色状态">
-          <el-input
-            placeholder="角色状态"
-            class="input-public"
-            v-model="roleForm.status"
-            clearable>
-            <i slot="prefix" class="el-input__icon el-icon-more-outline"></i>
-          </el-input>
+          <el-select v-model="roleForm.status" placeholder="请输入角色状态" @change="clickChange">
+            <el-option label="启用" value="0"></el-option>
+            <el-option label="禁用" value="1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="创建时间">
-          <el-date-picker
-            v-model="roleForm.createTime"
+           <el-date-picker
+            v-model="params"
             class="input-public"
-            type="datetime"
-            placeholder="选择起始时间"
-            default-time="12:00:00">
+            style="width: 240px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
         <el-button class="btn-search" type="primary" @click="searchRole(roleForm)">搜索</el-button>
@@ -153,8 +153,12 @@
         roleForm:{
           roleName:'',
           status:'',
-          createTime:'',
+          createTime: undefined,
+          beginTime: undefined,
+          endTime:undefined,
         },
+        // 创建时间 开始及结束
+        params:[],
         // 表格数据
         tableData:[],
         query:{
@@ -184,6 +188,7 @@
       this.reqRoleList();
     },
     methods:{
+      clickChange:function(){},
       // 请求所有用户角色
       reqRoleList:function(){
         let item = JSON.stringify(this.query);
@@ -200,6 +205,10 @@
       // 模糊搜索 用户角色
       searchRole:function (val) {
         console.log("val",val)
+        if( this.params != null){
+          this.roleForm.beginTime = this.params[0];
+          this.roleForm.endTime = this.params[1];
+        }     
         searchRole(val).then(res => {
           console.log("res",res)
           this.tableData = res.data.data;
