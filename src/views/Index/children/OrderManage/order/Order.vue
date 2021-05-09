@@ -12,6 +12,7 @@
             v-model="params"
             class="input-public"
             style="width: 240px"
+            size="mini"
             value-format="yyyy-MM-dd"
             type="daterange"
             range-separator="-"
@@ -19,8 +20,10 @@
             end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
-        <el-button class="btn-search" type="primary" @click="searchOrder(orderForm)">搜索</el-button>
-        <el-button class="btn-search" @click="refreshOrderForm">重置</el-button>
+        <el-form-item>
+          <el-button icon="el-icon-search" size="mini" type="primary" @click="searchOrder(orderForm)">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="refreshOrderForm">重置</el-button>
+        </el-form-item>
       </el-form>
 
       <el-table

@@ -12,13 +12,15 @@
           <el-input
             placeholder="请选择角色名称"
             class="input-public"
+            size="small"
+            style="width: 240px"
             v-model="roleForm.roleName"
             clearable>
             <i slot="prefix" class="el-input__icon el-icon-user"></i>
           </el-input>
         </el-form-item>
         <el-form-item label="角色状态">
-          <el-select v-model="roleForm.status" placeholder="请输入角色状态" @change="clickChange">
+          <el-select v-model="roleForm.status"  style="width: 240px" size="small" placeholder="请输入角色状态" @change="clickChange">
             <el-option label="启用" value="0"></el-option>
             <el-option label="禁用" value="1"></el-option>
           </el-select>
@@ -27,6 +29,7 @@
            <el-date-picker
             v-model="params"
             class="input-public"
+            size="small"
             style="width: 240px"
             value-format="yyyy-MM-dd"
             type="daterange"
@@ -35,13 +38,15 @@
             end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
-        <el-button class="btn-search" type="primary" @click="searchRole(roleForm)">搜索</el-button>
-        <el-button class="btn-search" @click="refreshRoleForm">重置</el-button>
+        <el-form-item>
+          <el-button icon="el-icon-search" size="mini" type="primary" @click="searchRole(roleForm)">搜索</el-button>
+          <el-button  icon="el-icon-refresh" size="mini" @click="refreshRoleForm">重置</el-button>
+        </el-form-item>
       </el-form>
       <div style="margin-top: 5px">
-        <el-button @click="refresh">刷新</el-button>
-        <el-button type="primary" @click="addRole">添加角色</el-button>
-        <el-button type="danger" @click="batchDel">批量删除</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="refresh">刷新</el-button>
+        <el-button type="primary"   icon="el-icon-plus" size="mini" @click="addRole">添加角色</el-button>
+        <el-button type="danger"  size="mini"  icon="el-icon-delete" @click="batchDel">批量删除</el-button>
       </div>
 <!--    table表格-->
       <el-table

@@ -7,9 +7,9 @@
     </el-breadcrumb>
     <el-card class="box-card">
       <div style="">
-        <el-button @click="refresh">刷新</el-button>
-        <el-button type="primary" @click="addGoods">添加商品</el-button>
-        <el-button type="danger" @click="batchDel">批量删除</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="refresh">刷新</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="mini" @click="addGoods">添加商品</el-button>
+        <el-button type="danger" size="mini"  icon="el-icon-delete" @click="batchDel">批量删除</el-button>
       </div>
       <el-table
         :data="tableData"
