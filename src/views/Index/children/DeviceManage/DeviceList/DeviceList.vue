@@ -7,11 +7,11 @@
     </el-breadcrumb>
     <el-card class="box-card">
       <div>
-        <el-button @click="refresh">刷新</el-button>
-        <el-button type="primary" @click="addDevice">添加设备</el-button>
-        <el-button type="danger" @click="batchDel">批量删除</el-button>
-        <el-button type="primary" @click="clickImport">导入</el-button>
-        <el-button type="primary" @click="clickExport">导出</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="refresh">刷新</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="mini" @click="addDevice">添加设备</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="mini" @click="batchDel">批量删除</el-button>
+        <el-button type="info" icon="el-icon-upload2" size="mini" @click="clickImport">导入</el-button>
+        <el-button type="warning" icon="el-icon-download" size="mini" @click="clickExport">导出</el-button>
       </div>
 
       <el-table
