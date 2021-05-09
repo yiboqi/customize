@@ -12,6 +12,7 @@
             placeholder="请选择用户名"
             class="input-public"
             v-model="userForm.userName"
+            size="small"
             clearable>
             <i slot="prefix" class="el-input__icon el-icon-user"></i>
           </el-input>
@@ -21,6 +22,7 @@
             placeholder="请选择手机号"
             class="input-public"
             v-model="userForm.phoneNumber"
+            size="small"
             clearable>
             <i slot="prefix" class="el-input__icon el-icon-phone-outline"></i>
           </el-input>
@@ -33,7 +35,11 @@
             clearable>
             <i slot="prefix" class="el-input__icon el-icon-more-outline"></i>
           </el-input> -->
-          <el-select v-model="userForm.status" placeholder="请输入用户状态" @change="clickChange">
+          <el-select size="small"
+                     class="input-public" 
+                     v-model="userForm.status" 
+                     placeholder="请输入用户状态" 
+                     @change="clickChange">
             <el-option label="启用" value="0"></el-option>
             <el-option label="禁用" value="1"></el-option>
           </el-select>
@@ -45,20 +51,23 @@
             style="width: 240px"
             value-format="yyyy-MM-dd"
             type="daterange"
+            size="small"
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
-        <el-button class="btn-search" type="primary" @click="serachUser(userForm)">搜索</el-button>
-        <el-button class="btn-search"  @click="refreshUserForm">重置</el-button>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="serachUser(userForm)">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini"  @click="refreshUserForm">重置</el-button>
+        </el-form-item>
       </el-form>
       <div style="margin-top: 5px">
-        <el-button @click="refresh">刷新</el-button>
-<!--        <el-button type="info" @click="ImportUser">导入</el-button>-->
-        <el-button type="success" @click="ExportUser">导出</el-button>
-        <el-button type="primary" @click="addUser">添加用户</el-button>
-        <el-button type="danger" @click="batchDel">批量删除</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="refresh">刷新</el-button>
+<!--        <el-button type="info" @click="ImportUser">导入</el-button>   v-hasPermi="['system:user:add']" -->
+        <el-button type="warning" icon="el-icon-download" size="mini" @click="ExportUser">导出</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="mini" @click="addUser">添加用户</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="mini" @click="batchDel">批量删除</el-button>
       </div>
       <el-table
         :data="tableData"
@@ -163,6 +172,9 @@
           </el-form-item>
           <el-form-item label="邮箱" :label-width="formLabelWidth">
             <el-input v-model="updateForm.email" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="角色" :label-width="formLabelWidth">
+            <el-input v-model="updateForm.roleIds"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -488,11 +500,11 @@
     flex-wrap:wrap;
   }
   .input-public{
-    width: 230px;
+    width: 240px;
   }
   .btn-search{
     margin-left: 50px;
-    width: 100px;
+    /* width: 100px; */
     height: 40px;
   }
   .pagination{
